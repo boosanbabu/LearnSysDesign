@@ -68,7 +68,7 @@ Reserving a listing.
 
 <br>
 
-3. Listings Storage & Quadtree
+#### 3. Listings Storage & Quadtree
 First and foremost, we can expect to store all of our listings in a SQL table. This will be our primary source of truth for listings on Airbnb, and whenever a host creates or deletes a listing, this SQL table will be written to.
 
 Then, since we care about the latency of browsing listings on Airbnb, and since this browsing will require querying listings based on their location, we can store our listings in a region quadtree, to be traversed for all browsing functionality.
@@ -90,7 +90,7 @@ If the leader dies at any point, one of the followers takes its place, and data 
 
 <br>
 
-4. Listing Listings
+#### 4. Listing Listings
 When renters browse through listings, they'll have to hit some ListListings API endpoint. This API call will search through the geo-index leader's quadtree for relevant listings based on the location that the renter passes.
 
 Finding relevant locations should be fairly straightforward and very fast, especially since we can estimate that our quadtree will have a depth of approximately 10, since 4^10 is greater than 1 million.
@@ -101,12 +101,12 @@ We can also make sure that our quadtree returns only a subset of relevant listin
 
 <br>
 
-5. Getting Individual Listings
+#### 5. Getting Individual Listings
 This API call should be extremely simple; we can expect to have listing IDs from the list of listings that a renter is browsing through, and we can simply query our SQL table of listings for the given ID.
 
 <br>
 
-6. Reserving Listings
+#### 6. Reserving Listings
 Reserved listings will need to be reflected both in our quadtree and in our persistent storage solution. In our quadtree, because they'll have to be excluded from the list of browsable listings; in our persistent storage solution, because if our quadtree needs to have them, then the main source of truth also needs to have them.
 
 We can have a second SQL table for reservations, holding listing IDs as well as date ranges and timestamps for when their reservations expire. When a renter tries to start the booking process of a listing, the reservation table will first be checked to see if there's currently a reservation for the given listing during the specified date range; if there is, an error is returned to the renter; if there isn't, a reservation is made with an expiration timestamp 15 minutes into the future.
@@ -133,7 +133,9 @@ A listing in our quadtree might look something like this:
 }
 
 <br>
-7. Load Balancing
+
+#### 7. Load Balancing
+
 On the host side, we can load balance requests to create and delete listings across a set of API servers using a simple round-robin approach. The API servers will then be in charge of writing to the SQL database and of communicating with the geo-index leader.
 
 On the renter side, we can load balance requests to list, get, and reserve listings across a set of API servers using an API-path-based server-selection strategy. Since workloads for these three API calls will be considerably different from one another, it makes sense to separate these calls across different sets of API servers.
