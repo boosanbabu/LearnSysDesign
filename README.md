@@ -115,6 +115,7 @@ Following the write to the reservation table, we synchronously update the geo-in
 
 A listing in our quadtree might look something like this:
 
+```
 {
   "unavailabilities": [
     {
@@ -131,7 +132,7 @@ A listing in our quadtree might look something like this:
   "thumbnailUrl": "Listing Thumbnail URL",
   "id": "Listing ID"
 }
-
+```
 <br>
 
 #### 7. Load Balancing
